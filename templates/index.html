@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>РФМ анализ по дате</title>
+</head>
+<body>
+    <form method="POST" style="
+    background-color: gray;
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  padding-left: 40px;">
+        {% csrf_token %}
+    <table>
+        {{ form }}
+    </table>
+    <input type="submit" value="Send" size="50" >
+</form>
+</body>
+</html>
