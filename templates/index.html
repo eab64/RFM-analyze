@@ -4,17 +4,30 @@
     <meta charset="utf-8" />
     <title>РФМ анализ по дате</title>
 </head>
-<body>
+<body style="background-color: slategray;">
     <form method="POST" style="
-    background-color: gray;
-  background-position: 10px 10px;
-  background-repeat: no-repeat;
-  padding-left: 40px;">
+  padding-left: 60px;
+padding-top: 10px;">
         {% csrf_token %}
     <table>
         {{ form }}
+        {{ form2 }}
+        {{ form3 }}
+        {{ form4 }}
+        {{ form5 }}
     </table>
-    <input type="submit" value="Send" size="50" >
+    <input type="submit" value="Отправить" size="50" >
 </form>
 </body>
 </html>
+
+
+<p  style="color:black; position: absolute;
+    top: 1px; /* Положение от нижнего края */
+    left: 350px; font-size:18px">
+Дата должна быть в таком формате <strong>"2020-12-01"</strong><br />
+    В поле <strong>High</strong> задаем сумму, выше которой дается 3 балла,например "80000"<br />
+    В поле <strong>Low</strong> задаем сумму, ниже которой дается 1 балл^ например "20000"<br />
+    В поле <strong>Max day</strong> задаем колчество посещений, больше которой дается 3 балла,например "4"<br />
+    В поле <strong>Min day</strong> задаем колчество посещений, меньше которой дается 1 балл,например "2"<br />
+</p>

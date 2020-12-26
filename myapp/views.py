@@ -1,23 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import pandas as pd
-from .forms import UserForm
-from django.shortcuts import render
 from .models import Information, Additional
 from .resources import InformationResource, AdditionalResource
-from django.contrib import messages
 from tablib import Dataset
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ValidationError
 import sqlalchemy
 import numpy as np
-from django_excel_response import ExcelResponse
 import sqlite3
 from django.shortcuts import render
-from .forms import UserForm, UploadFileForm
+from .forms import UserForm, UploadFileForm, IncomeHigh, IncomeLow, Max_day, Min_day
 from io import BytesIO
-import io
-import openpyxl
+
 
 def simple_upload(request):
     if request.method == 'POST':
@@ -27,13 +22,7 @@ def simple_upload(request):
         new_client = request.FILES['myfile']
         imported_data = dataset.load(new_client.read(), format = 'xlsx')
         for data in imported_data:
-            value1 = Information(
-                data[1],
-                data[2],
-                data[3],
-                data[6],
-                data[9],
-            )
+            value1 = Information(data[1], data[2], data[3], data[6], data[9])
             try:
                 value1.save()
             except ValueError:
@@ -41,24 +30,24 @@ def simple_upload(request):
             except ValidationError as e:
                 print(e)
         for data2 in imported_data:
-            value2 = Additional(
-                data2[1],
-                data2[3],
-                data2[11],
-                data2[16],
-            )
+            value2 = Additional(data2[1], data2[3], data2[11], data2[16])
             try:
                 value2.save()
             except ValueError:
                 print('WRONG number')
             except ValidationError as e:
                 print(e)
+    print()
     return render(request, 'upload.html')
 
 
 def unload(request) -> HttpResponse:
     if request.method == "POST":
         form = request.POST.get("date")
+        form2 = request.POST.get("high")
+        form3 = request.POST.get("low")
+        form4 = request.POST.get("max_day")
+        form5 = request.POST.get("min_day")
         con = sqlalchemy.create_engine(
             'sqlite:////Users/Yeldos/PycharmProjects/no_related/no_relates/db.sqlite3')  # Connect to db
         df = pd.read_sql("SELECT * FROM myapp_information WHERE Visit_count>0", con)
@@ -67,22 +56,21 @@ def unload(request) -> HttpResponse:
         df_sum.reset_index(inplace=True)
         df_by_data = df_data[['Number','Visit_data']].groupby(by='Number').max()
         merged = pd.merge(df_sum, df_by_data[['Visit_data']], on='Number', how='inner')
-        # day = '2020-12-01 13:15:00'
         merged["days"] = (pd.to_datetime(merged["Visit_data"]).sub(pd.Timestamp(form)).dt.days) * -1
         conditions = [(merged["days"] <= np.percentile(merged["days"], 33)),  # Меньше 109
                       (merged["days"] <= np.percentile(merged["days"], 66)),  # Меньше 209
                       (merged["days"] >= np.percentile(merged["days"], 66))  # Больше 209
                       ]
         values = ['3', '2', '1']
-        conditions2 = [(merged["Visit_count"] == 1),
-                       (merged["Visit_count"] == 2) | (merged["Visit_count"] == 3),
-                       (merged["Visit_count"] >= 4)
+        conditions2 = [(merged["Visit_count"] <= float(form5)),
+                       (merged["Visit_count"] >= float(form4)),
+                       (merged["Visit_count"] > float(form5)) | (merged["Visit_count"] < float(form4)),
                        ]
-        values2 = ['1', '2', '3']
-        conditions3 = [(merged["Income"] <= 20000),  # Меньше чем 20000
-                       (merged["Income"] >= 80000),  # Больше чем 80000
-                       (merged["Income"] > 20000) | (
-                               merged["Income"] < 80000)
+        values2 = ['1', '3', '2']
+        conditions3 = [(merged["Income"] <= float(form3)),  # Меньше чем 20000
+                       (merged["Income"] >= float(form2)),  # Больше чем 80000
+                       (merged["Income"] > float(form3)) | (
+                               merged["Income"] < float(form2))
                        ]
         values3 = ['1', '3', '2']
 
@@ -117,7 +105,11 @@ def unload(request) -> HttpResponse:
             return response
     else:
         userform = UserForm()
-        return render(request, "index.html", {"form": userform})
+        high = IncomeHigh()
+        low = IncomeLow()
+        max_day = Max_day()
+        min_day = Min_day()
+        return render(request, "index.html", {"form": userform, "form2": high, "form3": low, "form4": max_day, "form5": min_day})
 
 def deleteRecord(request):
     try:
@@ -162,10 +154,11 @@ def index(request):
             writer = pd.ExcelWriter(b, engine='xlsxwriter')
             df.to_excel(writer, sheet_name='Sheet1')
             writer.save()
-            filename = 'test'
+            filename = 'analyze'
             content_type = 'application/vnd.ms-excel'
             response = HttpResponse(b.getvalue(), content_type=content_type)
             response['Content-Disposition'] = 'attachment; filename="' + filename + '.xlsx"'
             return response
         return render(request, 'upload.html')
         return HttpResponseRedirect("/")
+

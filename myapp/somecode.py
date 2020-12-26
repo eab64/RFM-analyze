@@ -68,3 +68,5 @@ def show_all():#Должен принимать дату, которая буд�
     print(np.percentile(merged["Visit_count"], 66), np.percentile(merged["Visit_count"], 33))
     print(np.percentile(merged["Income"], 66), np.percentile(merged["Income"], 33))
     path = '/Users/Yeldos/PycharmProjects/no_related/no_relates/output2.xlsx' # this should live elsewhere, definitely
+
+

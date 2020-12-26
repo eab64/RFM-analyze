@@ -3,7 +3,9 @@
 <body style="background-color:slategray;">
 <input style="width: 240px;
             height: 100px;
-            position: relative;
+            position: absolute;
+            top: 20px;
+            left: 15px;
             border:1px solid #000;
             border-radius:3px;
             text-align:center;
@@ -15,19 +17,25 @@
             background-image: -o-linear-gradient(#EEEEEE, #D8D8D8 130%);
             background-image: linear-gradient(#EEEEEE, #D8D8D8 130%);"
        type="button" onclick="location.href='format/';" value="Подготовка файла к загрузке"/>
-<form style="
+
+
+<form style="position: absolute;
   background-position: 10px 10px;
   background-repeat: no-repeat;
   padding-left: 40px;" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input style="
-    background-color: white;
+    <input style="position: absolute;
+    top: 160px;
+    left: 240px;
+    background-color: slategray;
   background-position: 10px 10px;
   background-repeat: no-repeat;
   padding-left: 40px;" type="file" name="myfile">
-    <button style="width: 200px;
+    <button style="width: 240px;
             height: 100px;
-            position: relative;
+            position: absolute;
+            top: 122px;
+            left: 7px;
             border:1px solid #000;
             border-radius:3px;
             text-align:center;
@@ -40,7 +48,7 @@
             background-image: linear-gradient(#EEEEEE, #D8D8D8 130%);" type="submit">Загрузить клиентов в базу</button>
   </form>
 
-<input style="width: 200px;
+<input style="width: 240px;
             height: 100px;
             position: absolute; /* Абсолютное позиционирование */
     top: 240px; /* Положение от нижнего края */
@@ -56,7 +64,7 @@
             background-image: -moz-linear-gradient(#EEEEEE, #D8D8D8 130%);
             background-image: -o-linear-gradient(#EEEEEE, #D8D8D8 130%);
             background-image: linear-gradient(#EEEEEE, #D8D8D8 130%);" type="button" onclick="location.href='date/';" value="Провести анализ данных" />
-<input style="width: 200px;
+<input style="width: 240px;
             height: 100px;
             position: absolute; /* Абсолютное позиционирование */
     top: 350px; /* Положение от нижнего края */
@@ -73,3 +81,16 @@
             background-image: -o-linear-gradient(#EEEEEE, #D8D8D8 130%);
             background-image: linear-gradient(#EEEEEE, #D8D8D8 130%);"
        type="button" onclick="location.href='delete/';" value="Удалить данные" />
+
+
+
+
+
+<p  style="color:black; position: absolute;
+    top: 50px; /* Положение от нижнего края */
+    left: 600px; font-size:20px">
+Шаг1. Нажать на кнопку подготовка файла, там загрузить файл с расширением .xlsx<br />
+    Шаг2. Нажать на форму  <strong>"Выберите файл"</strong> и загрузить полученный файл<br />
+    Шаг3. После загрузки всех файлов в базу, нажать кнопку <strong>"Провести анализ"</strong><br />
+    Шаг4. После того как анализ закончен, удалить все данные с базы
+</p>
